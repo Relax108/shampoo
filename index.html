@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shampoo Making Chemical Calculator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+      }
+
+      .calculator {
+        padding: 40px;
+      }
+
+      .step {
+        background: white;
+        margin-bottom: 30px;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #4facfe;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .step:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .step-title {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .step-number {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-weight: bold;
+      }
+
+      .input-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .input-field {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .input-field label {
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 8px;
+        font-size: 0.95em;
+      }
+
+      .input-field input {
+        padding: 12px 15px;
+        border: 2px solid #e1e8ed;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+      }
+
+      .input-field input:focus {
+        outline: none;
+        border-color: #4facfe;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+      }
+
+      .calculate-btn {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 15px;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+      }
+
+      .result {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #2c3e50;
+        border-left: 4px solid #00d2d3;
+      }
+
+      .equation {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-family: "Courier New", monospace;
+        border-left: 3px solid #6c757d;
+        color: #495057;
+      }
+
+      .auto-filled {
+        background: #e8f5e8 !important;
+        border-color: #28a745 !important;
+      }
+
+      .auto-filled-label::after {
+        content: " (Auto-filled)";
+        color: #28a745;
+        font-size: 0.8em;
+        font-weight: normal;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .calculator {
+          padding: 20px;
+        }
+
+        .input-group {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Shampoo Making Calculator</h1>
+        <p>
+          Complete chemical calculation workflow from K₂CO₃ titration to final
+          shampoo production
+        </p>
+      </div>
+
+      <div class="calculator">
+        <!-- Initial Parameters -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">0</div>
+            Initial Parameters
+          </div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="total_vol_k2co3"
+                >Total Available Volume of K₂CO₃ Solution (mL)</label
+              >
+              <input
+                type="number"
+                id="total_vol_k2co3"
+                step="0.1"
+                placeholder="Enter total volume"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: K2CO3 Molarity by Titration -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">1</div>
+            Determine Molarity of K₂CO₃ by Titration with HCl
+          </div>
+          <div class="equation">K₂CO₃ + 2HCl → 2KCl + H₂O + CO₂</div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="vol_k2co3"
+                >Sample Volume of K₂CO₃ for Titration (mL)</label
+              >
+              <input type="number" id="vol_k2co3" step="0.1" placeholder="" />
+            </div>
+            <div class="input-field">
+              <label for="mol_hcl_1">Molarity of HCl (M)</label>
+              <input type="number" id="mol_hcl_1" step="0.001" placeholder="" />
+            </div>
+            <div class="input-field">
+              <label for="vol_hcl_1">Volume of HCl used (mL)</label>
+              <input type="number" id="vol_hcl_1" step="0.1" placeholder="" />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep1()">
+            Calculate Molarity
+          </button>
+          <div id="result1" class="result" style="display: none"></div>
+        </div>
+
+        <!-- Step 2: Mass of CaCO3 needed -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">2</div>
+            Determine Mass of CaCO₃ Needed
+          </div>
+          <div class="equation">
+            Moles of CaCO₃ needed = Total Moles of K₂CO₃ available from Step 1
+          </div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="moles_k2co3" class="auto-filled-label"
+                >Total Moles of K₂CO₃ Available (mol)</label
+              >
+              <input
+                type="number"
+                id="moles_k2co3"
+                step="0.000001"
+                class="auto-filled"
+              />
+            </div>
+            <div class="input-field">
+              <label for="mw_caco3">Molecular Weight of CaCO₃ (g/mol)</label>
+              <input type="number" id="mw_caco3" value="100.09" step="0.01" />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep2()">
+            Calculate Mass
+          </button>
+          <div id="result2" class="result" style="display: none"></div>
+        </div>
+
+        <!-- Step 3: Mass of CaO residue -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">3</div>
+            Calculate Mass of CaO Residue after Heating CaCO₃
+          </div>
+          <div class="equation">CaCO₃ → CaO + CO₂</div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="mass_caco3" class="auto-filled-label"
+                >Mass of CaCO₃ (g)</label
+              >
+              <input
+                type="number"
+                id="mass_caco3"
+                step="0.001"
+                class="auto-filled"
+              />
+            </div>
+            <div class="input-field">
+              <label for="mw_cao">Molecular Weight of CaO (g/mol)</label>
+              <input type="number" id="mw_cao" value="56.08" step="0.01" />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep3()">
+            Calculate CaO Mass
+          </button>
+          <div id="result3" class="result" style="display: none"></div>
+        </div>
+
+        <!-- Step 4: Molarity of KOH by double titration -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">4</div>
+            Determine Molarity of KOH by Double Titration
+          </div>
+          <div class="equation">
+            First endpoint: KOH + HCl → KCl + H₂O<br />
+            Second endpoint: K₂CO₃ + HCl → KHCO₃ + KCl, then KHCO₃ + HCl → KCl +
+            H₂O + CO₂
+          </div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="mol_hcl_4">Molarity of Standard HCl (M)</label>
+              <input type="number" id="mol_hcl_4" step="0.001" placeholder="" />
+            </div>
+            <div class="input-field">
+              <label for="v_phen"
+                >Volume to Phenolphthalein endpoint (mL)</label
+              >
+              <input type="number" id="v_phen" step="0.1" placeholder="" />
+            </div>
+            <div class="input-field">
+              <label for="v_methyl"
+                >Volume to Methyl Orange endpoint (mL)</label
+              >
+              <input type="number" id="v_methyl" step="0.1" placeholder="" />
+            </div>
+            <div class="input-field">
+              <label for="v_sample">Sample Volume of KOH solution (mL)</label>
+              <input type="number" id="v_sample" step="0.1" placeholder="" />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep4()">
+            Calculate KOH Molarity
+          </button>
+          <div id="result4" class="result" style="display: none"></div>
+        </div>
+
+        <!-- Step 5: Concentrate KOH to 5.94M -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">5</div>
+            Concentrate KOH Solution by Evaporation
+          </div>
+          <div class="equation">M₁V₁ = M₂V₂</div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="initial_vol_koh"
+                >Total Initial Volume of KOH (mL)</label
+              >
+              <input
+                type="number"
+                id="initial_vol_koh"
+                step="0.1"
+                placeholder=""
+              />
+            </div>
+            <div class="input-field">
+              <label for="initial_mol_koh" class="auto-filled-label"
+                >Initial Molarity of KOH (M)</label
+              >
+              <input
+                type="number"
+                id="initial_mol_koh"
+                step="0.001"
+                class="auto-filled"
+              />
+            </div>
+            <div class="input-field">
+              <label for="final_mol_koh">Final Molarity of KOH (M)</label>
+              <input
+                type="number"
+                id="final_mol_koh"
+                step="0.01"
+                placeholder=""
+                value="5.94"
+              />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep5()">
+            Calculate Final Volume
+          </button>
+          <div id="result5" class="result" style="display: none"></div>
+        </div>
+
+        <!-- Step 6: Mass of oil needed -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">6</div>
+            Determine Mass of Oil Needed for Saponification
+          </div>
+          <div class="equation">
+            Mass of oil = (Moles of KOH × 1000) / Saponification Value
+          </div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="moles_koh_final" class="auto-filled-label"
+                >Moles of KOH (mol)</label
+              >
+              <input
+                type="number"
+                id="moles_koh_final"
+                step="0.000001"
+                class="auto-filled"
+              />
+            </div>
+            <div class="input-field">
+              <label for="sap_value"
+                >Saponification Value of Oil (g KOH/g oil)</label
+              >
+              <input type="number" id="sap_value" step="0.001" placeholder="" />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep6()">
+            Calculate Oil Mass
+          </button>
+          <div id="result6" class="result" style="display: none"></div>
+        </div>
+
+        <!-- Step 7: Volume of water needed -->
+        <div class="step">
+          <div class="step-title">
+            <div class="step-number">7</div>
+            Determine Volume of Water Needed to Mix with Shampoo Paste
+          </div>
+          <div class="equation">
+            Water Volume (mL) = 3 × Total Paste Mass (g)
+          </div>
+          <div class="input-group">
+            <div class="input-field">
+              <label for="final_vol_koh" class="auto-filled-label"
+                >Final Volume of Concentrated KOH (mL)</label
+              >
+              <input
+                type="number"
+                id="final_vol_koh"
+                step="0.1"
+                class="auto-filled"
+              />
+            </div>
+            <div class="input-field">
+              <label for="mass_oil" class="auto-filled-label"
+                >Mass of Oil (g)</label
+              >
+              <input
+                type="number"
+                id="mass_oil"
+                step="0.001"
+                class="auto-filled"
+              />
+            </div>
+            <div class="input-field">
+              <label for="density_koh"
+                >Assumed Density of Concentrated KOH (g/mL)</label
+              >
+              <input type="number" id="density_koh" value="1.0" step="0.01" />
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStep7()">
+            Calculate Water Volume
+          </button>
+          <div id="result7" class="result" style="display: none"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Global variables to store calculated values
+      let calculatedValues = {};
+
+      function calculateStep1() {
+        const volK2CO3Sample = parseFloat(
+          document.getElementById("vol_k2co3").value
+        );
+        const molHCl = parseFloat(document.getElementById("mol_hcl_1").value);
+        const volHCl = parseFloat(document.getElementById("vol_hcl_1").value);
+        const totalVolK2CO3 = parseFloat(
+          document.getElementById("total_vol_k2co3").value
+        );
+
+        if (!volK2CO3Sample || !molHCl || !volHCl || !totalVolK2CO3) {
+          alert(
+            "Please fill in all fields including the initial total volume of K₂CO₃"
+          );
+          return;
+        }
+
+        // Convert mL to L for calculations
+        const volK2CO3SampleL = volK2CO3Sample / 1000;
+        const volHClL = volHCl / 1000;
+
+        // K2CO3 + 2HCl -> 2KCl + H2O + CO2
+        // Moles of HCl used = molarity × volume
+        const molesHCl = molHCl * volHClL;
+        // Moles of K2CO3 in sample = moles of HCl / 2 (stoichiometry)
+        const molesK2CO3Sample = molesHCl / 2;
+        // Molarity of K2CO3 = moles / volume
+        const molarityK2CO3 = molesK2CO3Sample / volK2CO3SampleL;
+
+        // Total moles of K2CO3 available = molarity × total volume
+        const totalVolK2CO3L = totalVolK2CO3 / 1000;
+        const totalMolesK2CO3 = molarityK2CO3 * totalVolK2CO3L;
+
+        calculatedValues.molesK2CO3Sample = molesK2CO3Sample;
+        calculatedValues.molarityK2CO3 = molarityK2CO3;
+        calculatedValues.totalMolesK2CO3 = totalMolesK2CO3;
+        calculatedValues.totalVolK2CO3 = totalVolK2CO3;
+
+        document.getElementById(
+          "result1"
+        ).innerHTML = `<strong>Molarity of K₂CO₃:</strong> ${molarityK2CO3.toFixed(
+          4
+        )} M<br>
+               <strong>Moles of K₂CO₃ in sample:</strong> ${molesK2CO3Sample.toFixed(
+                 6
+               )} mol<br>
+               <strong>Total moles of K₂CO₃ available:</strong> ${totalMolesK2CO3.toFixed(
+                 6
+               )} mol`;
+        document.getElementById("result1").style.display = "block";
+
+        // Auto-fill Step 2
+        document.getElementById("moles_k2co3").value =
+          totalMolesK2CO3.toFixed(6);
+      }
+
+      function calculateStep2() {
+        const totalMolesK2CO3 = parseFloat(
+          document.getElementById("moles_k2co3").value
+        );
+        const mwCaCO3 = parseFloat(document.getElementById("mw_caco3").value);
+
+        if (!totalMolesK2CO3 || !mwCaCO3) {
+          alert(
+            "Please ensure Step 1 is completed and molecular weight is entered"
+          );
+          return;
+        }
+
+        // Moles of CaCO3 needed = total moles of K2CO3
+        const molesCaCO3 = totalMolesK2CO3;
+        // Mass = moles × molecular weight
+        const massCaCO3 = molesCaCO3 * mwCaCO3;
+
+        calculatedValues.massCaCO3 = massCaCO3;
+        calculatedValues.molesCaCO3 = molesCaCO3;
+
+        document.getElementById(
+          "result2"
+        ).innerHTML = `<strong>Mass of CaCO₃ needed:</strong> ${massCaCO3.toFixed(
+          4
+        )} g`;
+        document.getElementById("result2").style.display = "block";
+
+        // Auto-fill Step 3
+        document.getElementById("mass_caco3").value = massCaCO3.toFixed(4);
+      }
+
+      function calculateStep3() {
+        const massCaCO3 = parseFloat(
+          document.getElementById("mass_caco3").value
+        );
+        const mwCaO = parseFloat(document.getElementById("mw_cao").value);
+        const mwCaCO3 = parseFloat(document.getElementById("mw_caco3").value);
+
+        if (!massCaCO3 || !mwCaO || !mwCaCO3) {
+          alert(
+            "Please ensure Step 2 is completed and molecular weights are entered"
+          );
+          return;
+        }
+
+        // CaCO3 -> CaO + CO2 (1:1 stoichiometry)
+        const molesCaCO3 = massCaCO3 / mwCaCO3;
+        const molesCaO = molesCaCO3; // Same number of moles
+        const massCaO = molesCaO * mwCaO;
+
+        calculatedValues.massCaO = massCaO;
+
+        document.getElementById(
+          "result3"
+        ).innerHTML = `<strong>Mass of CaO residue:</strong> ${massCaO.toFixed(
+          4
+        )} g`;
+        document.getElementById("result3").style.display = "block";
+      }
+
+      function calculateStep4() {
+        const molHCl = parseFloat(document.getElementById("mol_hcl_4").value);
+        const vPhen = parseFloat(document.getElementById("v_phen").value);
+        const vMethyl = parseFloat(document.getElementById("v_methyl").value);
+        const vSample = parseFloat(document.getElementById("v_sample").value);
+
+        if (!molHCl || !vPhen || !vMethyl || !vSample) {
+          alert("Please fill in all fields for Step 4");
+          return;
+        }
+
+        // Convert mL to L for calculations
+        const vPhenL = vPhen / 1000;
+        const vMethylL = vMethyl / 1000;
+        const vSampleL = vSample / 1000;
+
+        // Volume for KOH only = V_phenolphthalein - (V_methyl_orange - V_phenolphthalein)
+        // = 2*V_phenolphthalein - V_methyl_orange
+        const vKOHL = 2 * vPhenL - vMethylL;
+        const molesKOH = molHCl * vKOHL;
+        const molarityKOH = molesKOH / vSampleL;
+
+        calculatedValues.molarityKOH = molarityKOH;
+
+        document.getElementById(
+          "result4"
+        ).innerHTML = `<strong>Molarity of KOH:</strong> ${molarityKOH.toFixed(
+          4
+        )} M<br>
+               <strong>Volume of HCl for KOH:</strong> ${(vKOHL * 1000).toFixed(
+                 1
+               )} mL<br>
+               <strong>Moles of KOH in sample:</strong> ${molesKOH.toFixed(
+                 6
+               )} mol`;
+        document.getElementById("result4").style.display = "block";
+
+        // Auto-fill Step 5
+        document.getElementById("initial_mol_koh").value =
+          molarityKOH.toFixed(4);
+      }
+
+      function calculateStep5() {
+        const initialVol = parseFloat(
+          document.getElementById("initial_vol_koh").value
+        );
+        const initialMol = parseFloat(
+          document.getElementById("initial_mol_koh").value
+        );
+        const finalMol = parseFloat(
+          document.getElementById("final_mol_koh").value
+        );
+
+        if (!initialVol || !initialMol || !finalMol) {
+          alert("Please ensure Step 4 is completed and all fields are filled");
+          return;
+        }
+
+        // Convert mL to L for calculations
+        const initialVolL = initialVol / 1000;
+
+        // M1V1 = M2V2, so V2 = M1V1/M2
+        const finalVolL = (initialMol * initialVolL) / finalMol;
+        const finalVol = finalVolL * 1000; // Convert back to mL
+        const molesKOH = initialMol * initialVolL;
+
+        calculatedValues.finalVolKOH = finalVol;
+        calculatedValues.molesKOH = molesKOH;
+
+        document.getElementById(
+          "result5"
+        ).innerHTML = `<strong>Final Volume of Concentrated KOH:</strong> ${finalVol.toFixed(
+          2
+        )} mL<br>
+               <strong>Total Moles of KOH:</strong> ${molesKOH.toFixed(
+                 6
+               )} mol<br>
+               <strong>Volume Reduction:</strong> ${(
+                 (1 - finalVol / initialVol) *
+                 100
+               ).toFixed(1)}%`;
+        document.getElementById("result5").style.display = "block";
+
+        // Auto-fill Step 6
+        document.getElementById("moles_koh_final").value = molesKOH.toFixed(6);
+        document.getElementById("final_vol_koh").value = finalVol.toFixed(2);
+      }
+
+      function calculateStep6() {
+        const molesKOH = parseFloat(
+          document.getElementById("moles_koh_final").value
+        );
+        const sapValue = parseFloat(document.getElementById("sap_value").value);
+
+        if (!molesKOH || !sapValue) {
+          alert(
+            "Please ensure Step 5 is completed and saponification value is entered"
+          );
+          return;
+        }
+
+        // Mass of oil = (moles of KOH × MW of KOH) / saponification value
+        // Saponification value is g KOH per g oil, so we need grams of KOH
+        const gKOH = molesKOH * 56.11; // MW of KOH = 56.11 g/mol
+        const massOil = gKOH / sapValue;
+
+        calculatedValues.massOil = massOil;
+
+        document.getElementById(
+          "result6"
+        ).innerHTML = `<strong>Mass of Oil needed:</strong> ${massOil.toFixed(
+          3
+        )} g<br>
+               <strong>Equivalent g KOH:</strong> ${gKOH.toFixed(3)} g`;
+        document.getElementById("result6").style.display = "block";
+
+        // Auto-fill Step 7
+        document.getElementById("mass_oil").value = massOil.toFixed(3);
+      }
+
+      function calculateStep7() {
+        const finalVolKOH = parseFloat(
+          document.getElementById("final_vol_koh").value
+        );
+        const massOil = parseFloat(document.getElementById("mass_oil").value);
+        const densityKOH = parseFloat(
+          document.getElementById("density_koh").value
+        );
+
+        if (!finalVolKOH || !massOil || !densityKOH) {
+          alert(
+            "Please ensure Steps 5 and 6 are completed and density is entered"
+          );
+          return;
+        }
+
+        // Mass of concentrated KOH solution = volume × density (volume in mL, density in g/mL)
+        const massKOHSol = finalVolKOH * densityKOH;
+        // Total paste mass = mass of oil + mass of KOH solution
+        const totalPasteMass = massOil + massKOHSol;
+        // Water volume = 3 × paste mass
+        const waterVolume = 3 * totalPasteMass;
+
+        document.getElementById(
+          "result7"
+        ).innerHTML = `<strong>Mass of KOH solution:</strong> ${massKOHSol.toFixed(
+          3
+        )} g<br>
+               <strong>Total shampoo paste mass:</strong> ${totalPasteMass.toFixed(
+                 3
+               )} g<br>
+               <strong>Volume of water needed:</strong> ${waterVolume.toFixed(
+                 3
+               )} mL<br>
+               <strong>Final shampoo volume:</strong> ${(
+                 waterVolume + totalPasteMass
+               ).toFixed(3)} mL`;
+        document.getElementById("result7").style.display = "block";
+      }
+
+      // Initialize with empty values
+      window.onload = function () {
+        // No default values - all fields start empty
+      };
+    </script>
+  </body>
+</html>
